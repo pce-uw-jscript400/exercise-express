@@ -21,7 +21,7 @@ app.get('/vegetables/:id', (req, res, next) => {
   const { vegetables } = data
   const { id } = req.params
   const vegetable = vegetables.find(veggie => veggie.id === id)
-  
+
   if (!vegetable) {
     const message = `Could not find vegetable with ID of ${id}`
     next({ status: 404, message })
@@ -33,7 +33,7 @@ app.get('/vegetables/:id', (req, res, next) => {
 app.post('/vegetables', helpers.validate, (req, res, next) => {
   const { vegetables } = data
   const vegetable = { id: generateId(), ...req.body }
-  
+
   vegetables.push(vegetable)
   res.status(201).json(vegetable)
 })

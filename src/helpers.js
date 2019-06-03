@@ -8,7 +8,7 @@ const validate = (req, res, next) => {
 
   const noExtraKeys = Object.keys(req.body).every(key => REQUIRED_KEYS.includes(key))
   if (!noExtraKeys) next(error)
-  
+
   next()
 }
 
