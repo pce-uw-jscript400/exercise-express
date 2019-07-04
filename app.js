@@ -48,7 +48,7 @@ app.get('/fruits', (req, res, next) => {
 app.get('/fruits/:id', (req, res, next) => {
   const { fruits } = data
   const { id } = req.params
-  const fruits = fruits.find(fruit => fruit.id === id)
+  const fruit = fruits.find(fruit => fruit.id === id)
 
   if (!fruit) {
     const message = `Could not find fruit with ID of ${id}`
@@ -82,14 +82,56 @@ app.post('/fruits', helpers.validate, (req, res, next) => {
 
 app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
   const { vegetables } = data
-  
+  //get the id from the request parameters
+  const { id } = req.params
+  //get the name,price from the request body
+  const { name, price } = req.body
+  //make sure there is a vegetable that has that id
+  const index = vegetables.indexOf(vegetable => vegetable.id === id)
+  //if not throw an error
+  if (index === -1) {
+    const message = `Could not find vegetable with ID of ${id}`
+    next({ status: 404, message })
+  }
+  //make sure our names/prices are defined and throw error if not.
+  if (!(name && price)) {
+    const message = `Bad request`
+    next({ status: 404, message })
+  }
+  //create our updated Veggie with the id, name, price
+  const updatedVegetable = {id: id, name: name, price: price}
+  //splice it into our DB
+  vegetables.splice(index, 1, updatedVegetable)
+  //return the correct status code along with the updated info
+  res.status(200).json(updatedVegetable)
 })
 
 // PUT /fruits/[id]
 
 app.put('/fruits/:id', helpers.validate, (req, res, next) => {
   const { fruits } = data
-  
+  //get the id from the request parameters
+  const { id } = req.params
+  //get the name,price from the request body
+  const { name, price } = req.body
+  //make sure there is a vegetable that has that id
+  const index = fruits.indexOf(fruit => fruit.id === id)
+  //if not throw an error
+  if (index === -1) {
+    const message = `Could not find fruit with ID of ${id}`
+    next({ status: 404, message })
+  }
+  //make sure our names/prices are defined and throw error if not.
+  if (!(name && price)) {
+    const message = `Bad request`
+    next({ status: 404, message })
+  }
+  //create our updated Veggie with the id, name, price
+  const updatedFruit = {id: id, name: name, price: price}
+  //splice it into our DB
+  fruits.splice(index, 1, updatedFruit)
+  //return the correct status code along with the updated info
+  res.status(200).json(updatedFruit)
 })
 
 // DELETE /vegetables/[id]
