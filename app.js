@@ -14,10 +14,20 @@ const data = {
 
 // GET /vegetables
 // implement /vegetables?name=[partial-query] in here
+// accepts an optional name query string
 
 app.get('/vegetables', (req, res, next) => {
   const { vegetables } = data
-  res.json(vegetables)
+  //destructure the name from the request body
+  const { name } = req.body
+  //if we have the name, filter the db for the items that contain the name
+  if(name){
+    res.json(vegetables.filter(vegetable => vegetable.name.contains(name)))
+  //else we just return the vegetables
+  } else {
+    res.json(vegetables)
+  }
+
 })
 
 // GET /vegetables/[id]
@@ -35,29 +45,6 @@ app.get('/vegetables/:id', (req, res, next) => {
   res.json(vegetable)
 })
 
-// GET /fruits
-// implement /fruits?name=[partial-query] in here
-
-app.get('/fruits', (req, res, next) => {
-  const { fruits } = data
-  req.json(fruits)
-})
-
-// GET /fruits[id]
-
-app.get('/fruits/:id', (req, res, next) => {
-  const { fruits } = data
-  const { id } = req.params
-  const fruit = fruits.find(fruit => fruit.id === id)
-
-  if (!fruit) {
-    const message = `Could not find fruit with ID of ${id}`
-    next({ status: 404, message })
-  }
-
-  res.json(fruit)
-})
-
 //POST /vegetables
 
 app.post('/vegetables', helpers.validate, (req, res, next) => {
@@ -68,14 +55,22 @@ app.post('/vegetables', helpers.validate, (req, res, next) => {
   res.status(201).json(vegetable)
 })
 
-//POST /fruits
 
-app.post('/fruits', helpers.validate, (req, res, next) => {
-  const { fruits } = data
-  const fruit = { id: generateId(), ...req.body }
+// DELETE /vegetables/[id]
 
-  fruits.push(fruit)
-  res.status(201).json(fruit)
+app.delete('/vegetables/:id', (req, res, next) => { 
+  const { vegetables } = data
+  const { id } = req.params
+  const index = vegetables.indexOf(veggie => veggie.id === id)
+
+  if (index === -1) {
+    const message = `Could not find vegetable with ID of ${id}`
+    next({ status: 404, message })
+  }
+
+  const removed = vegetables.splice(index, 1);
+  res.json(removed)
+
 })
 
 // PUT /vegetables/[id]
@@ -103,7 +98,66 @@ app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
   //splice it into our DB
   vegetables.splice(index, 1, updatedVegetable)
   //return the correct status code along with the updated info
-  res.status(200).json(updatedVegetable)
+  res.json(updatedVegetable)
+})
+
+// GET /fruits
+// implement /fruits?name=[partial-query] in here
+// accepts an optional name query string
+
+app.get('/fruits', (req, res, next) => {
+  const { fruits } = data
+  //destructure the name from the request body
+  const { name } = req.body
+  //if we have a name, filter the db for items that contain the name
+  if(name){
+    res.json(fruits.filter(fruit => fruit.name.contains(name)))
+  //else we just return the fruits
+  } else {
+    req.json(fruits)
+  }
+})
+
+// GET /fruits[id]
+
+app.get('/fruits/:id', (req, res, next) => {
+  const { fruits } = data
+  const { id } = req.params
+  const fruit = fruits.find(fruit => fruit.id === id)
+
+  if (!fruit) {
+    const message = `Could not find fruit with ID of ${id}`
+    next({ status: 404, message })
+  }
+
+  res.json(fruit)
+})
+
+//POST /fruits
+
+app.post('/fruits', helpers.validate, (req, res, next) => {
+  const { fruits } = data
+  const fruit = { id: generateId(), ...req.body }
+
+  fruits.push(fruit)
+  res.status(201).json(fruit)
+})
+
+// DELETE /fruits/[id]
+
+app.delete('/fruits/:id', (req, res, next) => { 
+  const { fruits } = data
+  const { id } = req.params
+  const index = fruits.indexOf(fruit => fruit.id === id)
+
+  if (index === -1) {
+    const message = `Could not find vegetable with ID of ${id}`
+    next({ status: 404, message })
+  }
+
+  const removed = fruits.splice(index, 1);
+  res.json(removed)
+
 })
 
 // PUT /fruits/[id]
@@ -131,41 +185,7 @@ app.put('/fruits/:id', helpers.validate, (req, res, next) => {
   //splice it into our DB
   fruits.splice(index, 1, updatedFruit)
   //return the correct status code along with the updated info
-  res.status(200).json(updatedFruit)
-})
-
-// DELETE /vegetables/[id]
-
-app.delete('/vegetables/:id', (req, res, next) => { 
-  const { vegetables } = data
-  const { id } = req.params
-  const index = vegetables.indexOf(veggie => veggie.id === id)
-
-  if (index === -1) {
-    const message = `Could not find vegetable with ID of ${id}`
-    next({ status: 404, message })
-  }
-
-  const removed = vegetables.splice(index, 1);
-  res.json(removed)
-
-})
-
-// DELETE /fruits/[id]
-
-app.delete('/fruits/:id', (req, res, next) => { 
-  const { fruits } = data
-  const { id } = req.params
-  const index = fruits.indexOf(fruit => fruit.id === id)
-
-  if (index === -1) {
-    const message = `Could not find vegetable with ID of ${id}`
-    next({ status: 404, message })
-  }
-
-  const removed = fruits.splice(index, 1);
-  res.json(removed)
-
+  res.json(updatedFruit)
 })
 
 app.use((req, res, next) => {
