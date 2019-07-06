@@ -19,9 +19,9 @@ const data = {
 app.get('/vegetables', (req, res, next) => {
   const { vegetables } = data
   //destructure the name from the request body
-  const { name } = req.body
+  const { name } = req.query
   //if we have the name, filter the db for the items that contain the name
-  if(name){
+  if (name) {
     res.json(vegetables.filter(vegetable => vegetable.name.contains(name)))
   //else we just return the vegetables
   } else {
@@ -108,13 +108,13 @@ app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
 app.get('/fruits', (req, res, next) => {
   const { fruits } = data
   //destructure the name from the request body
-  const { name } = req.body
+  const { name } = req.query
   //if we have a name, filter the db for items that contain the name
-  if(name){
+  if (name) {
     res.json(fruits.filter(fruit => fruit.name.contains(name)))
   //else we just return the fruits
   } else {
-    req.json(fruits)
+    res.json(fruits)
   }
 })
 
