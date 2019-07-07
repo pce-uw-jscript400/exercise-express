@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
+    "devreset": "cp -f ./data/dev/* ./data/; nodemon app.js",
     "lint": "standard --fix --verbose | snazzy"
   },
   "keywords": [],
