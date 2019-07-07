@@ -21,8 +21,9 @@ app.get('/vegetables', (req, res, next) => {
   //destructure the name from the request body
   const { name } = req.query
   //if we have the name, filter the db for the items that contain the name
-  if (name) {
-    res.json(vegetables.filter(vegetable => vegetable.name.contains(name)))
+  if (name !== undefined) {
+    const filteredVegetables = vegetables.filter(vegetable => vegetable.name.includes(name))
+    res.json(filteredVegetables)
   //else we just return the vegetables
   } else {
     res.json(vegetables)
@@ -40,9 +41,9 @@ app.get('/vegetables/:id', (req, res, next) => {
   if (!vegetable) {
     const message = `Could not find vegetable with ID of ${id}`
     next({ status: 404, message })
+  } else {
+    res.json(vegetable)
   }
-
-  res.json(vegetable)
 })
 
 //POST /vegetables
@@ -61,16 +62,14 @@ app.post('/vegetables', helpers.validate, (req, res, next) => {
 app.delete('/vegetables/:id', (req, res, next) => { 
   const { vegetables } = data
   const { id } = req.params
-  const index = vegetables.indexOf(veggie => veggie.id === id)
-
+  const index = vegetables.findIndex(vegetable => vegetable.id === id)
   if (index === -1) {
     const message = `Could not find vegetable with ID of ${id}`
     next({ status: 404, message })
+  } else {
+    const removed = vegetables.splice(index, 1);
+    res.json(removed[0])
   }
-
-  const removed = vegetables.splice(index, 1);
-  res.json(removed)
-
 })
 
 // PUT /vegetables/[id]
@@ -82,23 +81,23 @@ app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
   //get the name,price from the request body
   const { name, price } = req.body
   //make sure there is a vegetable that has that id
-  const index = vegetables.indexOf(vegetable => vegetable.id === id)
+  const index = vegetables.findIndex(vegetable => vegetable.id === id)
   //if not throw an error
   if (index === -1) {
     const message = `Could not find vegetable with ID of ${id}`
     next({ status: 404, message })
-  }
-  //make sure our names/prices are defined and throw error if not.
-  if (!(name && price)) {
+  } else if (!(name && price)) {
+    //make sure our names/prices are defined and throw error if not.
     const message = `Bad request`
     next({ status: 404, message })
+  } else {
+    //create our updated Veggie with the id, name, price
+    const updatedVegetable = {id, name, price}
+    //splice it into our DB
+    vegetables.splice(index, 1, updatedVegetable)
+    //return the correct status code along with the updated info
+    res.json(updatedVegetable)
   }
-  //create our updated Veggie with the id, name, price
-  const updatedVegetable = {id: id, name: name, price: price}
-  //splice it into our DB
-  vegetables.splice(index, 1, updatedVegetable)
-  //return the correct status code along with the updated info
-  res.json(updatedVegetable)
 })
 
 // GET /fruits
@@ -110,8 +109,8 @@ app.get('/fruits', (req, res, next) => {
   //destructure the name from the request body
   const { name } = req.query
   //if we have a name, filter the db for items that contain the name
-  if (name) {
-    res.json(fruits.filter(fruit => fruit.name.contains(name)))
+  if (name !== undefined) {
+    res.json(fruits.filter(fruit => fruit.name.includes(name)))
   //else we just return the fruits
   } else {
     res.json(fruits)
@@ -128,9 +127,9 @@ app.get('/fruits/:id', (req, res, next) => {
   if (!fruit) {
     const message = `Could not find fruit with ID of ${id}`
     next({ status: 404, message })
+  } else {
+    res.json(fruit)
   }
-
-  res.json(fruit)
 })
 
 //POST /fruits
@@ -148,16 +147,15 @@ app.post('/fruits', helpers.validate, (req, res, next) => {
 app.delete('/fruits/:id', (req, res, next) => { 
   const { fruits } = data
   const { id } = req.params
-  const index = fruits.indexOf(fruit => fruit.id === id)
+  const index = fruits.findIndex(fruit => fruit.id === id)
 
   if (index === -1) {
     const message = `Could not find vegetable with ID of ${id}`
     next({ status: 404, message })
+  } else {
+    const removed = fruits.splice(index, 1);
+    res.json(removed[0])
   }
-
-  const removed = fruits.splice(index, 1);
-  res.json(removed)
-
 })
 
 // PUT /fruits/[id]
@@ -169,23 +167,23 @@ app.put('/fruits/:id', helpers.validate, (req, res, next) => {
   //get the name,price from the request body
   const { name, price } = req.body
   //make sure there is a vegetable that has that id
-  const index = fruits.indexOf(fruit => fruit.id === id)
+  const index = fruits.findIndex(fruit => fruit.id === id)
   //if not throw an error
   if (index === -1) {
     const message = `Could not find fruit with ID of ${id}`
     next({ status: 404, message })
-  }
+  } else if (!(name && price)) {
   //make sure our names/prices are defined and throw error if not.
-  if (!(name && price)) {
     const message = `Bad request`
     next({ status: 404, message })
+  } else {
+    //create our updated Veggie with the id, name, price
+    const updatedFruit = {id, name, price}
+    //splice it into our DB
+    fruits.splice(index, 1, updatedFruit)
+    //return the correct status code along with the updated info
+    res.json(updatedFruit)
   }
-  //create our updated Veggie with the id, name, price
-  const updatedFruit = {id: id, name: name, price: price}
-  //splice it into our DB
-  fruits.splice(index, 1, updatedFruit)
-  //return the correct status code along with the updated info
-  res.json(updatedFruit)
 })
 
 app.use((req, res, next) => {
