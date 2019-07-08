@@ -1,5 +1,6 @@
 const REQUIRED_KEYS = [ 'name', 'price' ]
 const validate = (req, res, next) => {
+  console.log('xxxx', req.body);
   const error = { status: 400, message: 'Bad request' }
   if (!req.body) next(error)
 
