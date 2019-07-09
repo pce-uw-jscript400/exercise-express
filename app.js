@@ -21,8 +21,9 @@ app.get('/vegetables', (req, res, next) => {
   //destructure the name from the request body
   const { name } = req.query
   //if we have the name, filter the db for the items that contain the name
-  if (name !== undefined) {
-    const filteredVegetables = vegetables.filter(vegetable => vegetable.name.includes(name))
+  if ( name ) {
+    let parsedName = JSON.parse(name)
+    const filteredVegetables = vegetables.filter(vegetable => vegetable.name.includes(parsedName))
     res.json(filteredVegetables)
   //else we just return the vegetables
   } else {
@@ -76,11 +77,8 @@ app.delete('/vegetables/:id', (req, res, next) => {
 
 app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
   const { vegetables } = data
-  //get the id from the request parameters
   const { id } = req.params
-  //get the name,price from the request body
   const { name, price } = req.body
-  //make sure there is a vegetable that has that id
   const index = vegetables.findIndex(vegetable => vegetable.id === id)
   //if not throw an error
   if (index === -1) {
@@ -91,11 +89,8 @@ app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
     const message = `Bad request`
     next({ status: 404, message })
   } else {
-    //create our updated Veggie with the id, name, price
     const updatedVegetable = {id, name, price}
-    //splice it into our DB
     vegetables.splice(index, 1, updatedVegetable)
-    //return the correct status code along with the updated info
     res.json(updatedVegetable)
   }
 })
@@ -109,8 +104,9 @@ app.get('/fruits', (req, res, next) => {
   //destructure the name from the request body
   const { name } = req.query
   //if we have a name, filter the db for items that contain the name
-  if (name !== undefined) {
-    res.json(fruits.filter(fruit => fruit.name.includes(name)))
+  if (name) {
+    let parsedName = JSON.parse(name)
+    res.json(fruits.filter(fruit => fruit.name.includes(parsedName)))
   //else we just return the fruits
   } else {
     res.json(fruits)
@@ -162,11 +158,8 @@ app.delete('/fruits/:id', (req, res, next) => {
 
 app.put('/fruits/:id', helpers.validate, (req, res, next) => {
   const { fruits } = data
-  //get the id from the request parameters
   const { id } = req.params
-  //get the name,price from the request body
   const { name, price } = req.body
-  //make sure there is a vegetable that has that id
   const index = fruits.findIndex(fruit => fruit.id === id)
   //if not throw an error
   if (index === -1) {
@@ -177,7 +170,6 @@ app.put('/fruits/:id', helpers.validate, (req, res, next) => {
     const message = `Bad request`
     next({ status: 404, message })
   } else {
-    //create our updated Veggie with the id, name, price
     const updatedFruit = {id, name, price}
     //splice it into our DB
     fruits.splice(index, 1, updatedFruit)
