@@ -14,7 +14,15 @@ const data = {
 
 app.get('/vegetables', (req, res, next) => {
   const { vegetables } = data
-  res.json(vegetables)
+  const { name } = req.query
+  if (name) {
+    const queriedVegetables = vegetables.filter(function(vegetable){
+      return vegetable.name.toLowerCase().includes(name)
+    })
+    res.json(queriedVegetables)
+  } else {
+    res.json(vegetables)
+  }
 })
 
 app.get('/vegetables/:id', (req, res, next) => {
@@ -36,6 +44,19 @@ app.post('/vegetables', helpers.validate, (req, res, next) => {
 
   vegetables.push(vegetable)
   res.status(201).json(vegetable)
+})
+
+app.delete('/vegetables/:id', (req, res, next) => {
+  const { id } = req.params
+  const { vegetables } = data
+  const veggieIndex = vegetables.findIndex(veggie => veggie.id == id)
+  if (veggieIndex >= 0) {
+    res.json(vegetables.splice(veggieIndex, 1)[0])
+    console.log(vegetables)
+  } else {
+    const message = `Cound not find vegetable with ID of ${id}`
+    next({ status: 404, message})
+  }
 })
 
 app.use((req, res, next) => {
