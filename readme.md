@@ -12,15 +12,15 @@ This exercise will assess your ability to build upon an already existing Express
 
 Improve upon and/or build the following routes as specified.
 
-- [ ] [GET /vegetables?name=[partial-query]](#get-vegetablesnamepartial-query)
-- [ ] [DELETE /vegetables/[id]](#delete-vegetablesid)
-- [ ] [PUT /vegetables/[id]](#put-vegetablesid)
-- [ ] [GET /fruits](#get-fruits)
-- [ ] [GET /fruits?name=[partial-query]](#get-fruitsnamepartial-query)
-- [ ] [GET /fruits/[id]](#get-fruitsid)
-- [ ] [POST /fruits](#post-fruitsid)
-- [ ] [DELETE /fruits/[id]](#delete-fruitsid)
-- [ ] [PUT /fruits/[id]](#put-fruitsid)
++ [ ] [GET /vegetables?name=[partial-query]](#get-vegetablesnamepartial-query)
++ [ ] [DELETE /vegetables/[id]](#delete-vegetablesid)
++ [ ] [PUT /vegetables/[id]](#put-vegetablesid)
++ [ ] [GET /fruits](#get-fruits)
++ [ ] [GET /fruits?name=[partial-query]](#get-fruitsnamepartial-query)
++ [ ] [GET /fruits/[id]](#get-fruitsid)
++ [ ] [POST /fruits](#post-fruitsid)
++ [ ] [DELETE /fruits/[id]](#delete-fruitsid)
++ [ ] [PUT /fruits/[id]](#put-fruitsid)
 
 ### GET /vegetables?name=[partial-query]
 
