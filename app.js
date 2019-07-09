@@ -8,10 +8,8 @@ if (NODE_ENV === 'development') app.use(require('morgan')('dev'))
 app.use(require('body-parser').json())
 
 const data = {
-  fruits: [{ "id": "H14ykcZcT", "name": "blueberries", "price": "2.99" },
-  { "id": "faf84ZZNF", "name": "strawberries", "price": "3.99" }],
-  vegetables: [{ "id": "AEdvQm9t_", "name": "green pepper", "price": "0.99" },
-  { "id": "JA_dIbXLW", "name": "red pepper", "price": "0.99" }]
+  fruits: [],
+  vegetables: []
 }
 
 app.get('/vegetables', (req, res, next) => {
