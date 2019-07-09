@@ -3,18 +3,28 @@ const express = require('express')
 const { generate: generateId } = require('shortid')
 const helpers = require('./src/helpers')
 const app = express()
+const lodash = require('lodash');
 
 if (NODE_ENV === 'development') app.use(require('morgan')('dev'))
 app.use(require('body-parser').json())
+
+const vegetableRoutes = require('./api/vegetables')
+const fruitRoutes = require('./api/fruits')
 
 const data = {
   fruits: [],
   vegetables: []
 }
 
+
 app.get('/vegetables', (req, res, next) => {
   const { vegetables } = data
-  res.json(vegetables)
+  if(req.query.name ) {
+    let matches = lodash.find(vegetables, ['name',req.query.name]);
+    res.json(matches)
+  } else {
+    res.json(vegetables)
+  }
 })
 
 app.get('/vegetables/:id', (req, res, next) => {
