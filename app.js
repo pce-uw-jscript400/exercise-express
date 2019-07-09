@@ -12,7 +12,7 @@ const data = {
   vegetables: []
 }
 
-app.get('/vegetables', (req, res, next) => {
+app.get('/vegetables?name=[partial-query]', (req, res, next) => {
   const { vegetables } = data
   res.json(vegetables)
 })
@@ -36,6 +36,35 @@ app.post('/vegetables', helpers.validate, (req, res, next) => {
 
   vegetables.push(vegetable)
   res.status(201).json(vegetable)
+})
+
+app.delete('/vegetables/[id]', (req, res, next) => {
+  const { vegetable } = data.id
+  vegetable.split(vegetables)
+})
+
+app.put('/vegetables/[id]', (req, res, next) => {
+  
+})
+
+app.get('/fruits?name=[partial-query]', (req, res, next) => {
+  const { fruits } = data
+  res.json(fruits)
+})
+
+
+
+app.delete('/fruits/[id]', (req, res, next) => {
+  const { fruit } = data.id
+  fruit.split(fruits)
+})
+
+app.post('/fruits', helpers.validate, (req, res, next) => {
+  const { fruits } = data
+  const fruits = { id: generateId(), ...req.body }
+
+  fruits.push(fruits)
+  res.status(201).json(fruits)
 })
 
 app.use((req, res, next) => {
