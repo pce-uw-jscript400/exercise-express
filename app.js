@@ -42,7 +42,7 @@ app.get('/vegetables/:id', (req, res, next) => {
 
 
 app.delete('/vegetables/:id', (req, res, next) => {
-  const { vegetables } = data
+  let { vegetables } = data
   const { id } = req.params
   const vegetable = vegetables.find(veggie => veggie.id === id);
 
@@ -51,10 +51,9 @@ app.delete('/vegetables/:id', (req, res, next) => {
     next({ status: 404, message })
   }
   else {
-    const vegIndex = vegetables.indexOf(vegetable);
-    vegetables.splice(vegIndex,1);
-    res.status(200).json(vegetable);
+    vegetables = vegetables.filter(veggie => veggie.id !== id)
   }
+  res.json(vegetable)
 });
 
 
@@ -113,7 +112,7 @@ app.get('/fruits/:id', (req, res, next) => {
 
 
 app.delete('/fruits/:id', (req, res, next) => {
-  const { fruits } = data
+  let { fruits } = data
   const { id } = req.params
   const fruit = fruits.find(fruit => fruit.id === id);
 
@@ -122,10 +121,9 @@ app.delete('/fruits/:id', (req, res, next) => {
     next({ status: 404, message })
   }
   else {
-    const fruitIndex = fruits.indexOf(fruit);
-    fruits.splice(fruitIndex,1);
-    res.status(200).json(fruit);
+    fruits = fruits.filter(fruit => fruit.id !== id)
   }
+  res.json(vegetable)
 });
 
 
