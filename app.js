@@ -3,7 +3,7 @@ const express = require('express')
 const { generate: generateId } = require('shortid')
 const helpers = require('./src/helpers')
 const app = express()
-const lodash = require('lodash');
+const _ = require('lodash');
 
 if (NODE_ENV === 'development') app.use(require('morgan')('dev'))
 app.use(require('body-parser').json())
@@ -11,16 +11,29 @@ app.use(require('body-parser').json())
 const vegetableRoutes = require('./api/vegetables')
 const fruitRoutes = require('./api/fruits')
 
-const data = {
-  fruits: [],
-  vegetables: []
+if (NODE_ENV === 'development') {
+  const data = require('./mock');
+} else {
+  const data = {
+    fruits: [],
+    vegetables: []
+  }
 }
 
+/**
+ * Vegetable Routes 
+ */
+
+// GET /vegetables
+// GET /vegetables?name=[partial]
+// TODO: [ ] Make search case insensitive
 
 app.get('/vegetables', (req, res, next) => {
   const { vegetables } = data
   if(req.query.name ) {
-    let matches = lodash.find(vegetables, ['name',req.query.name]);
+    let matches = _.filter(vegetables, (vegetable) => {
+      return vegetable.name.indexOf(req.query.name) > -1;
+    });
     res.json(matches)
   } else {
     res.json(vegetables)
@@ -47,6 +60,74 @@ app.post('/vegetables', helpers.validate, (req, res, next) => {
   vegetables.push(vegetable)
   res.status(201).json(vegetable)
 })
+
+app.delete('/vegetables/:id', (req, res, next) => {
+  const { vegetables } = data
+  const { id } = req.params
+  const vegetableIdx = vegetables.findIndex(veggie => veggie.id == id)
+  console.log(`vegetable index is ${vegetableIdx}`);
+  if (vegetableIdx < 0) {
+    const message = `Could not find vegetable with ID of ${id}`
+    next({ status: 404, message })
+  }
+  
+  const vegetable = vegetables.splice(vegetableIdx,1);
+  res.json(vegetable)
+})
+
+
+
+// GET /fruits
+// GET /fruits?name=[partial]
+// TODO: [ ] Make search case insensitive
+
+app.get('/fruits', (req, res, next) => {
+  const { fruits } = data
+  if(req.query.name ) {
+    let matches = _.filter(fruits, (fruit) => {
+      return fruit.name.indexOf(req.query.name) > -1;
+    });
+    res.json(matches)
+  } else {
+    res.json(fruits)
+  }
+})
+
+app.get('/fruits/:id', (req, res, next) => {
+  const { fruits } = data
+  const { id } = req.params
+  const fruit = fruits.find(fruit => fruit.id === id)
+
+  if (!fruit) {
+    const message = `Could not find fruit with ID of ${id}`
+    next({ status: 404, message })
+  }
+
+  res.json(fruit)
+})
+
+app.post('/fruits', helpers.validate, (req, res, next) => {
+  const { fruits } = data
+  const fruit = { id: generateId(), ...req.body }
+
+  fruits.push(fruit)
+  res.status(201).json(fruit)
+})
+
+app.delete('/fruits/:id', (req, res, next) => {
+  const { fruits } = data
+  const { id } = req.params
+  const fruitIdx = fruits.findIndex(fruit => fruit.id == id)
+  console.log(`fruit index is ${fruitIdx}`);
+  if (fruitIdx < 0) {
+    const message = `Could not find fruit with ID of ${id}`
+    next({ status: 404, message })
+  }
+  
+  const fruit = fruits.splice(fruitIdx,1);
+  res.json(fruit)
+})
+
 
 app.use((req, res, next) => {
   next({
