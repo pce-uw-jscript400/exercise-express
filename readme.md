@@ -176,7 +176,7 @@ _Note: This is not a new route!_
 
 **Incorrect Response Body Example**
 ```json
-{ "message": "Could not find banana with ID of 1" }
+{ "message": "Could not find fruit with ID of 1" }
 ```
 
 ### PUT /fruits/[id]
