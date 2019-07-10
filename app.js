@@ -16,6 +16,8 @@ const data = {
   ]
 }
 
+// Vegetables
+
 app.get('/vegetables', (req, res, next) => {
   const { vegetables } = data
   const { name } = req.query
@@ -49,6 +51,46 @@ app.post('/vegetables', helpers.validate, (req, res, next) => {
   vegetables.push(vegetable)
   res.status(201).json(vegetable)
 })
+
+app.delete('/vegetables/:id', (req, res, next) => {
+  const { vegetables } = data
+  const { id } = req.params
+  const vegetable = vegetables.find(veggie => veggie.id === id)
+
+  for(let i = 0; i < data.vegetables.length; i++) {
+    if (vegetables[i].id === id) {
+      vegetables.splice(i, 1);
+      const message = `${vegetable.name} with ID ${id} has been deleted!`
+      next({ status: 200, message })
+    }
+  }
+
+  const message = `Could not find vegetable with ID of ${id}`
+  next({ status: 404, message })
+})
+
+app.put('/vegetables/:id', (req, res, next) => {
+  const { vegetables } = data
+  const { id } = req.params
+  const vegetable = vegetables.find(veggie => veggie.id === id)
+
+  let veggie;
+  for(let i = 0; i < data.vegetables.length; i++) {
+    if (vegetables[i].id === id) {
+      veggie.name = req.body.name
+      veggie.price = req.body.price
+
+      const message = `${vegetable.name} with ID ${id} has been updated!`
+      next({ status: 200, message })
+    } 
+  }
+
+  const message = `Could not find vegetable with ID of ${id}`
+  next({ status: 404, message })
+
+})
+
+// Fruits
 
 app.get('/fruits', (req, res, next) => {
   const { fruits } = data
@@ -84,44 +126,21 @@ app.post('/fruits', helpers.validate, (req, res, next) => {
   res.status(201).json(fruit)
 })
 
-app.delete('/vegetables/:id', (req, res, next) => {
-  const { vegetables } = data
+app.delete('/fruits/:id', (req, res, next) => {
+  const { fruits } = data
   const { id } = req.params
-  const vegetable = vegetables.find(veggie => veggie.id === id)
+  const fruit = fruits.find(fruitItem => fruitItem.id === id)
 
-  for(let i = 0; i < data.vegetables.length; i++) {
-    if (vegetables[i].id === id) {
-      vegetables.splice(i, 1);
-      const message = `${vegetable.name} with ID ${id} has been deleted!`
+  for(let i = 0; i < data.fruits.length; i++) {
+    if (fruits[i].id === id) {
+      fruits.splice(i, 1);
+      const message = `${fruit.name} with ID ${id} has been deleted!`
       next({ status: 200, message })
-    } else {
-      const message = `Could not find vegetable with ID of ${id}`
-      next({ status: 404, message })
     }
   }
 
-})
-
-app.put('/vegetables/:id', (req, res, next) => {
-  const { vegetables } = data
-  const { id } = req.params
-
-  let veggie;
-  for(let i = 0; i < data.vegetables.length; i++) {
-    if (vegetables[i].id === id) {
-      veggie.name = req.body.name
-      veggie.price = req.body.price
-
-      const message = `${vegetable.name} with ID ${id} has been updated!`
-      next({ status: 200, message })
-    } else {
-      const message = `Could not find vegetable with ID of ${id}`
-      next({ status: 404, message })
-    }
-  }
-
-  res.json(veggie)
-
+  const message = `Could not find fruit with ID of ${id}`
+  next({ status: 404, message })
 })
 
 app.use((req, res, next) => {
