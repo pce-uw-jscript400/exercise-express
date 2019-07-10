@@ -23,6 +23,7 @@ app.get('/vegetables', (req, res, next) => {
   } else {
     res.status(200).json(vegetable)
   }
+  res.json({ status: 200, response: veggie })
 
 })
 
@@ -67,9 +68,10 @@ app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
     next({ status: 404, message })
   }
   else {
-    const vegIndex = vegetables.indexOf(vegetable);
-    vegetables[vegIndex] = { id: id, ...req.body }
-    res.status(200).json(vegetables[vegIndex]);
+    veggie.name = req.body.name
+    veggie.price = req.body.price
+
+    res.status(200).json(veggie);
   }
 });
 
@@ -137,9 +139,10 @@ app.put('/fruits/:id', helpers.validate, (req, res, next) => {
     next({ status: 404, message })
   }
   else {
-    const fruitIndex = fruits.indexOf(fruit);
-    fruits[fruitIndex] = { id: id, ...req.body }
-    res.status(200).json(fruits[fruitIndex]);
+    fruit.name = req.body.name
+    fruit.price = req.body.price
+
+    res.status(200).json(fruit);
   }
 });
 
