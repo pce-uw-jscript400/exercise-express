@@ -9,23 +9,17 @@ app.use(require('body-parser').json())
 
 const data = {
   fruits: [],
-  vegetables: []
+  vegetables: [] 
 }
 
 // GET /vegetables
 // implement /vegetables?name=[partial-query] in here
-// accepts an optional name query string
-
 app.get('/vegetables', (req, res, next) => {
   const { vegetables } = data
-  //destructure the name from the request body
   const { name } = req.query
-  //if we have the name, filter the db for the items that contain the name
   if ( name ) {
-    let parsedName = JSON.parse(name)
-    const filteredVegetables = vegetables.filter(vegetable => vegetable.name.includes(parsedName))
+    const filteredVegetables = vegetables.filter(vegetable => vegetable.name.includes(name))
     res.json(filteredVegetables)
-  //else we just return the vegetables
   } else {
     res.json(vegetables)
   }
@@ -33,12 +27,10 @@ app.get('/vegetables', (req, res, next) => {
 })
 
 // GET /vegetables/[id]
-
 app.get('/vegetables/:id', (req, res, next) => {
   const { vegetables } = data
   const { id } = req.params
   const vegetable = vegetables.find(veggie => veggie.id === id)
-
   if (!vegetable) {
     const message = `Could not find vegetable with ID of ${id}`
     next({ status: 404, message })
@@ -48,18 +40,15 @@ app.get('/vegetables/:id', (req, res, next) => {
 })
 
 //POST /vegetables
-
 app.post('/vegetables', helpers.validate, (req, res, next) => {
   const { vegetables } = data
   const vegetable = { id: generateId(), ...req.body }
-
   vegetables.push(vegetable)
   res.status(201).json(vegetable)
 })
 
 
 // DELETE /vegetables/[id]
-
 app.delete('/vegetables/:id', (req, res, next) => { 
   const { vegetables } = data
   const { id } = req.params
@@ -74,19 +63,14 @@ app.delete('/vegetables/:id', (req, res, next) => {
 })
 
 // PUT /vegetables/[id]
-
+// helpers.validate helps us with req.body here and returns Bad request if not all keys passed.
 app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
   const { vegetables } = data
   const { id } = req.params
   const { name, price } = req.body
   const index = vegetables.findIndex(vegetable => vegetable.id === id)
-  //if not throw an error
   if (index === -1) {
     const message = `Could not find vegetable with ID of ${id}`
-    next({ status: 404, message })
-  } else if (!(name && price)) {
-    //make sure our names/prices are defined and throw error if not.
-    const message = `Bad request`
     next({ status: 404, message })
   } else {
     const updatedVegetable = {id, name, price}
@@ -97,29 +81,21 @@ app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
 
 // GET /fruits
 // implement /fruits?name=[partial-query] in here
-// accepts an optional name query string
-
 app.get('/fruits', (req, res, next) => {
   const { fruits } = data
-  //destructure the name from the request body
   const { name } = req.query
-  //if we have a name, filter the db for items that contain the name
   if (name) {
-    let parsedName = JSON.parse(name)
-    res.json(fruits.filter(fruit => fruit.name.includes(parsedName)))
-  //else we just return the fruits
+    res.json(fruits.filter(fruit => fruit.name.includes(name)))
   } else {
     res.json(fruits)
   }
 })
 
 // GET /fruits[id]
-
 app.get('/fruits/:id', (req, res, next) => {
   const { fruits } = data
   const { id } = req.params
   const fruit = fruits.find(fruit => fruit.id === id)
-
   if (!fruit) {
     const message = `Could not find fruit with ID of ${id}`
     next({ status: 404, message })
@@ -129,22 +105,18 @@ app.get('/fruits/:id', (req, res, next) => {
 })
 
 //POST /fruits
-
 app.post('/fruits', helpers.validate, (req, res, next) => {
   const { fruits } = data
   const fruit = { id: generateId(), ...req.body }
-
   fruits.push(fruit)
   res.status(201).json(fruit)
 })
 
 // DELETE /fruits/[id]
-
 app.delete('/fruits/:id', (req, res, next) => { 
   const { fruits } = data
   const { id } = req.params
   const index = fruits.findIndex(fruit => fruit.id === id)
-
   if (index === -1) {
     const message = `Could not find vegetable with ID of ${id}`
     next({ status: 404, message })
@@ -155,7 +127,7 @@ app.delete('/fruits/:id', (req, res, next) => {
 })
 
 // PUT /fruits/[id]
-
+// helpers.validate helps us with req.body here and returns Bad request if not all keys passed.
 app.put('/fruits/:id', helpers.validate, (req, res, next) => {
   const { fruits } = data
   const { id } = req.params
@@ -165,15 +137,9 @@ app.put('/fruits/:id', helpers.validate, (req, res, next) => {
   if (index === -1) {
     const message = `Could not find fruit with ID of ${id}`
     next({ status: 404, message })
-  } else if (!(name && price)) {
-  //make sure our names/prices are defined and throw error if not.
-    const message = `Bad request`
-    next({ status: 404, message })
   } else {
     const updatedFruit = {id, name, price}
-    //splice it into our DB
     fruits.splice(index, 1, updatedFruit)
-    //return the correct status code along with the updated info
     res.json(updatedFruit)
   }
 })
@@ -186,7 +152,6 @@ app.use((req, res, next) => {
 })
 
 //err handler
-
 app.use((err, req, res, next) => {
   const { message, status } = err
   res.status(status).json({ message })
