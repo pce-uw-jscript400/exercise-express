@@ -14,13 +14,13 @@ Improve upon and/or build the following routes as specified.
 
 - [X] [GET /vegetables?name=[partial-query]](#get-vegetablesnamepartial-query)
 - [X] [DELETE /vegetables/[id]](#delete-vegetablesid)
-- [ ] [PUT /vegetables/[id]](#put-vegetablesid)
+- [X] [PUT /vegetables/[id]](#put-vegetablesid)
 - [X] [GET /fruits](#get-fruits)
 - [X] [GET /fruits?name=[partial-query]](#get-fruitsnamepartial-query)
 - [X] [GET /fruits/[id]](#get-fruitsid)
 - [X] [POST /fruits](#post-fruitsid)
 - [X] [DELETE /fruits/[id]](#delete-fruitsid)
-- [ ] [PUT /fruits/[id]](#put-fruitsid)
+- [X] [PUT /fruits/[id]](#put-fruitsid)
 
 ### GET /vegetables?name=[partial-query]
 

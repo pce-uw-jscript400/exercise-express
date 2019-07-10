@@ -2,15 +2,15 @@ const { NODE_ENV = 'development', PORT = 5000 } = process.env
 const express = require('express')
 const { generate: generateId } = require('shortid')
 const helpers = require('./src/helpers')
-const app = express()
 const _ = require('lodash');
+const app = express()
+
 
 if (NODE_ENV === 'development') app.use(require('morgan')('dev'))
 app.use(require('body-parser').json())
 
-const vegetableRoutes = require('./api/vegetables')
-const fruitRoutes = require('./api/fruits')
 
+// Use Mock Data if in development enviro
 if (NODE_ENV === 'development') {
   const data = require('./mock');
 } else {
@@ -23,10 +23,6 @@ if (NODE_ENV === 'development') {
 /**
  * Vegetable Routes 
  */
-
-// GET /vegetables
-// GET /vegetables?name=[partial]
-// TODO: [ ] Make search case insensitive
 
 app.get('/vegetables', (req, res, next) => {
   const { vegetables } = data
@@ -65,21 +61,31 @@ app.delete('/vegetables/:id', (req, res, next) => {
   const { vegetables } = data
   const { id } = req.params
   const vegetableIdx = vegetables.findIndex(veggie => veggie.id == id)
-  console.log(`vegetable index is ${vegetableIdx}`);
   if (vegetableIdx < 0) {
     const message = `Could not find vegetable with ID of ${id}`
     next({ status: 404, message })
   }
-  
   const vegetable = vegetables.splice(vegetableIdx,1);
   res.json(vegetable)
 })
 
+app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
+  const { vegetables } = data
+  const { id } = req.params
+  const vegetableIdx = vegetables.findIndex(vegetable => vegetable.id == id)
+  if (vegetableIdx < 0) {
+    const message = `Could not find vegetable with ID of ${id}`
+    next({ status: 404, message })
+  }
+  const vegetable = {id: req.params.id, name: req.body.name, price:req.body.price}
+  vegetables.splice(vegetableIdx,1,vegetable);
+  res.json(vegetable)
+})
 
 
-// GET /fruits
-// GET /fruits?name=[partial]
-// TODO: [ ] Make search case insensitive
+/**
+ * Fruit Routes
+ */
 
 app.get('/fruits', (req, res, next) => {
   const { fruits } = data
@@ -118,7 +124,6 @@ app.delete('/fruits/:id', (req, res, next) => {
   const { fruits } = data
   const { id } = req.params
   const fruitIdx = fruits.findIndex(fruit => fruit.id == id)
-  console.log(`fruit index is ${fruitIdx}`);
   if (fruitIdx < 0) {
     const message = `Could not find fruit with ID of ${id}`
     next({ status: 404, message })
@@ -128,6 +133,18 @@ app.delete('/fruits/:id', (req, res, next) => {
   res.json(fruit)
 })
 
+app.put('/fruits/:id', helpers.validate, (req, res, next) => {
+  const { fruits } = data
+  const { id } = req.params
+  const fruitIdx = fruits.findIndex(fruit => fruit.id == id)
+  if (fruitIdx < 0) {
+    const message = `Could not find fruit with ID of ${id}`
+    next({ status: 404, message })
+  }
+  const fruit = {id: req.params.id, name: req.body.name, price:req.body.price}
+  fruits.splice(fruitIdx,1,fruit);
+  res.json(fruit)
+})
 
 app.use((req, res, next) => {
   next({
