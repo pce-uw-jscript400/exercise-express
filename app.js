@@ -9,11 +9,7 @@ app.use(require('body-parser').json())
 
 const data = {
   fruits: [],
-  vegetables: [
-    { "id": "AEdvQm9t_", "name": "green pepper", "price": "0.99" },
-    { "id": "JA_dIbXLW", "name": "red pepper", "price": "0.99" },
-    { "id": "5TsEt-xfI", "name": "turnip", "price": "0.79" }
-  ]
+  vegetables: []
 }
 
 // Vegetables
