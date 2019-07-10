@@ -1,24 +1,11 @@
-// I reeeally wanted to get this architecture working but struggled to do so
-// and chose to keep it here for later. I was spending too much time on
-// trying to get it to work.
+// I reeeally wanted to get this architecture working but found I was
+// spending too much time to do so and chose to keep it here for later.
 
 const express = require("express");
 const router = express.Router();
 
 const { generate: generateId } = require("shortid");
 const helpers = require("../../src/helpers");
-
-// router.get("/", (req, res, next) => {
-//   res.status(200).json({
-//     message: "Handling GET requests to /vegetables"
-//   });
-// });
-
-// router.post("/", (req, res, next) => {
-//   res.status(200).json({
-//     message: "Handling POST requests to /vegetables"
-//   });
-// });
 
 const data = {
   fruits: [],

@@ -16,25 +16,29 @@ const data = {
 
 app.get("/vegetables", (req, res, next) => {
   const { vegetables } = data;
+  // Query for name
   const name = req.query.name;
-  const filteredVeggies = vegetables.filter(
-    veggie => !name || veggie.name.includes(name)
+  // Use array .filter() method to return a new array if there's a record with a matching name,
+  // otherwise just return the available vegetable data if no query is specified (i.e. name constant is falsey).
+  const filteredVegetables = vegetables.filter(
+    vegetable => !name || vegetable.name.includes(name)
   );
 
-  res.json(filteredVeggies);
+  res.json(filteredVegetables);
 });
 
 app.get("/vegetables/:id", (req, res, next) => {
   const { vegetables } = data;
   const { id } = req.params;
+  // Use array .find() method to locate a successful id match in the available vegetable data.
   const vegetable = vegetables.find(produce => produce.id === id);
-
+  // If the vegetable const is falsey, then throw 404 error, else return the response with status 200 and the vegetable record.
   if (!vegetable) {
     const message = `Could not find vegetable with ID of ${id}`;
     next({ status: 404, message });
   }
 
-  res.json(vegetable);
+  res.status(200).json(vegetable);
 });
 
 app.post("/vegetables", helpers.validate, (req, res, next) => {
@@ -48,12 +52,32 @@ app.post("/vegetables", helpers.validate, (req, res, next) => {
 app.delete("/vegetables/:id", (req, res, next) => {
   const { vegetables } = data;
   const { id } = req.params;
+  // Again, using the array .find() method to locate a successful id match in the available vegetable data.
   const vegetable = vegetables.find(produce => produce.id === id);
-
+  // If the vegetable const is falsey, then throw 404 error, else return the response with status 200 and the vegetable record to be deleted.
   if (!vegetable) {
     const message = `Could not find vegetable with ID of ${id}`;
     next({ status: 404, message });
   }
+  res.status(200).json(vegetable);
+});
+
+app.put("/vegetables/:id", helpers.validate, (req, res, next) => {
+  const { vegetables } = data;
+  const { id } = req.params;
+  // Destructor values of the request body
+  const { name, price } = req.body;
+  // Again, using the array .find() method to locate a successful id match in the available vegetable data.
+  const vegetable = vegetables.find(produce => produce.id === id);
+  // If the vegetable const is falsey, then throw 404 error,
+  // else return the response with status 200 and the vegetable updated record.
+  if (!vegetable) {
+    const message = `Could not find vegetable with ID of ${id}`;
+    next({ status: 404, message });
+  }
+  // Updates the object with new values
+  vegetable.name = name;
+  vegetable.price = price;
 
   res.status(200).json(vegetable);
 });
@@ -62,7 +86,10 @@ app.delete("/vegetables/:id", (req, res, next) => {
 
 app.get("/fruits", (req, res, next) => {
   const { fruits } = data;
+  // Query for name
   const name = req.query.name;
+  // Use array .filter() method to return a new array if there's a record with a matching name,
+  // otherwise just return the available fruit data if no query is specified (i.e. name constant is falsey).
   const filteredFruits = fruits.filter(
     fruit => !name || fruit.name.includes(name)
   );
@@ -73,8 +100,9 @@ app.get("/fruits", (req, res, next) => {
 app.get("/fruits/:id", (req, res, next) => {
   const { fruits } = data;
   const { id } = req.params;
+  // Use array .find() method to locate a successful id match in the available fruit data.
   const fruit = fruits.find(produce => produce.id === id);
-
+  // If the fruit const is falsey, then throw 404 error, else return the response with status 200 and the fruit record.
   if (!fruit) {
     const message = `Could not find fruit with ID of ${id}`;
     next({ status: 404, message });
@@ -83,6 +111,7 @@ app.get("/fruits/:id", (req, res, next) => {
   res.status(200).json(fruit);
 });
 
+// I modeled this off of the example code provided.
 app.post("/fruits", helpers.validate, (req, res, next) => {
   const { fruits } = data;
   const fruit = { id: generateId(), ...req.body };
@@ -94,12 +123,32 @@ app.post("/fruits", helpers.validate, (req, res, next) => {
 app.delete("/fruits/:id", (req, res, next) => {
   const { fruits } = data;
   const { id } = req.params;
+  // Again, using the array .find() method to locate a successful id match in the available fruit data.
   const fruit = fruits.find(produce => produce.id === id);
-
+  // If the fruit const is falsey, then throw 404 error, else return the response with status 200 and the fruit record.
   if (!fruit) {
     const message = `Could not find fruit with ID of ${id}`;
     next({ status: 404, message });
   }
+
+  res.status(200).json(fruit);
+});
+
+app.put("/fruits/:id", helpers.validate, (req, res, next) => {
+  const { fruits } = data;
+  const { id } = req.params;
+  // Destructor values of the request body
+  const { name, price } = req.body;
+  // Using the array .find() method to locate a successful id match in the available fruit data.
+  const fruit = fruits.find(produce => produce.id === id);
+  // If the fruit const is falsey, then throw 404 error, else return the response with status 200 and the fruit updated record.
+  if (!fruit) {
+    const message = `Could not find fruit with ID of ${id}`;
+    next({ status: 404, message });
+  }
+  // Updates the object with new values
+  fruit.name = name;
+  fruit.price = price;
 
   res.status(200).json(fruit);
 });
