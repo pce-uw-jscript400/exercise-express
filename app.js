@@ -9,7 +9,7 @@ app.use(require('body-parser').json())
 
 const data = {
   fruits: [],
-  vegetables: []
+  vegetables: ['carrot']
 }
 
 app.get('/vegetables', (req, res, next) => {
@@ -38,6 +38,32 @@ app.post('/vegetables', helpers.validate, (req, res, next) => {
   res.status(201).json(vegetable)
 })
 
+// Update
+app.put('/vegetables/:id', (req, res, next) => {
+ if (!req.params.id) next(/*error*/)
+  // arrray
+  // find the vegetable to update
+  data.vegetables.find((vegetable) => {
+    return vegetable.id === req.params.id
+  }) 
+  //  or: 
+  //  for (let i = 0; i < data.vegetables.length; i++) {
+  //    // select the right vegetable
+  //  }
+ // or   vegetables.findIndex 
+
+  console.log(req.body)
+  // update the object in place
+  veggie.name = req.body.name
+  veggie.price = req.body.price
+  // or
+  const index = data.vegetables.findIndex(veggie)
+  // Array.splice  - remove from array or insert into array
+  // todo
+  // then 
+  res.json({status: 200, response: veggie })
+})
+
 app.use((req, res, next) => {
   next({
     status: 404,
@@ -45,6 +71,7 @@ app.use((req, res, next) => {
   })
 })
 
+// error handler
 app.use((err, req, res, next) => {
   const { message, status } = err
   res.status(status).json({ message })
