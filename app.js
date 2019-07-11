@@ -27,9 +27,11 @@ const data = {
 app.get("/vegetables", (req, res, next) => {
   const { vegetables } = data;
   const vegName = req.query.name;
-  const matchedVegetables = vegetables.filter(veggie => veggie.name.includes(vegName));
+  const matchedVegetables = vegetables.filter(veggie =>
+    veggie.name.includes(vegName)
+  );
   //if /vegetables return the whole array if no match return empty array
-  let message = (!vegName) ? vegetables : matchedVegetables;
+  let message = !vegName ? vegetables : matchedVegetables;
   res.json(message);
 });
 
@@ -47,9 +49,11 @@ app.get("/vegetables/:id", (req, res, next) => {
 });
 
 //DELETE http://localhost:5000/vegetables/toQxYtAr8
-app.delete('/vegetables/:id', (req, res, next) => { 
-  const status = 200
-  const { id } = req.params
+//DELETE http://localhost:5000/vegetables/toQx
+app.delete("/vegetables/:id", (req, res, next) => {
+  const status = 200;
+  const { id } = req.params;
+  const { vegetables } = data;
   const vegetable = vegetables.find(veggie => veggie.id === id);
 
   if (!vegetable) {
@@ -57,10 +61,32 @@ app.delete('/vegetables/:id', (req, res, next) => {
     next({ status: 404, message });
   }
 
-  const message = `Deleted message ${id}`
-  res.status(status).json({message})
-})
+  const message = `Deleted message ${id}`;
+  res.status(status).json(message);
+});
 
+//PUT http://localhost:5000/vegetables/toQxYtAr8
+//PUT http://localhost:5000/vegetables/to
+app.put("/vegetables/:id", (req, res, next) => {
+  const status = 200;
+  const { id } = req.params;
+  const { vegetables } = data;
+  const vegetable = vegetables.find(veggie => veggie.id === req.params.id);
+  let message = vegetable;
+
+  if (!vegetable) {
+    const message = `Could not find vegetable with ID of ${id}`;
+    next({ status: 404, message });
+  } else if (!req.body.name || !req.body.price) { 
+    message = "Bad request"
+  } else {
+    vegetable.name = req.body.name;
+    vegetable.price = req.body.price;
+  }
+
+
+  res.status(status).json(message);
+});
 
 app.post("/vegetables", helpers.validate, (req, res, next) => {
   const { vegetables } = data;
