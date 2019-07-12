@@ -8,7 +8,23 @@ if (NODE_ENV === "development") app.use(require("morgan")("dev"));
 app.use(require("body-parser").json());
 
 const data = {
-  fruits: [],
+  fruits: [
+    {
+      id: "hxVQBS8vO",
+      name: "banana",
+      price: "0.50"
+    },
+    {
+      id: "X8tf7Fl_j",
+      name: "strawberry",
+      price: "4.33"
+    },
+    {
+      id: "303zEauDV",
+      name: "blueberry",
+      price: "3.63"
+    }
+  ],
   vegetables: [
     {
       id: "toQxYtAr8",
@@ -77,13 +93,12 @@ app.put("/vegetables/:id", (req, res, next) => {
   if (!vegetable) {
     const message = `Could not find vegetable with ID of ${id}`;
     next({ status: 404, message });
-  } else if (!req.body.name || !req.body.price) { 
-    message = "Bad request"
+  } else if (!req.body.name || !req.body.price) {
+    message = "Bad request";
   } else {
     vegetable.name = req.body.name;
     vegetable.price = req.body.price;
   }
-
 
   res.status(status).json(message);
 });
@@ -94,6 +109,89 @@ app.post("/vegetables", helpers.validate, (req, res, next) => {
 
   vegetables.push(vegetable);
   res.status(201).json(vegetable);
+});
+
+//////Fruit
+
+//GET http://localhost:5000/fruits?name=banana
+//GET http://localhost:5000/fruits?name=berry
+//GET http://localhost:5000/fruits
+
+
+
+app.get("/fruits", (req, res, next) => {
+  const { fruits } = data;
+  const fruitName = req.query.name;
+  const matchedfruits = fruits.filter(fruitie =>
+    fruitie.name.includes(fruitName)
+  );
+  //if /fruits return the whole array if no match return empty array
+  let message = !fruitName ? fruits : matchedfruits;
+  res.json(message);
+});
+
+app.get("/fruits/:id", (req, res, next) => {
+  const { fruits } = data;
+  const { id } = req.params;
+  const fruit = fruits.find(fruitie => fruitie.id === id);
+
+  if (!fruit) {
+    const message = `Could not find fruit with ID of ${id}`;
+    next({ status: 404, message });
+  }
+
+  res.json(fruit);
+});
+
+//POST 
+app.post("/fruits", helpers.validate, (req, res, next) => {
+  const { fruits } = data;
+  const fruit = { id: generateId(), ...req.body };
+
+  fruits.push(fruit);
+  res.status(201).json(fruit);
+});
+
+
+//DELETE
+//DELETE http://localhost:5000/fruits/hxVQBS8vO
+//DELETE http://localhost:5000/fruits/hxV
+app.delete("/fruits/:id", (req, res, next) => {
+  const status = 200;
+  const { id } = req.params;
+  const { fruits } = data;
+  const fruit = fruits.find(fruitie => fruitie.id === id);
+
+  if (!fruit) {
+    const message = `Could not find fruit with ID of ${id}`;
+    next({ status: 404, message });
+  }
+
+  res.status(status).json(fruit);
+});
+
+
+//PUT
+//PUT http://localhost:5000/fruits/303zEauDV
+//PUT http://localhost:5000/fruits/to
+app.put("/fruits/:id", (req, res, next) => {
+  const status = 200;
+  const { id } = req.params;
+  const { fruits } = data;
+  const fruit = fruits.find(fruitie => fruitie.id === req.params.id);
+  let message = fruit;
+
+  if (!fruit) {
+    const message = `Could not find fruit with ID of ${id}`;
+    next({ status: 404, message });
+  } else if (!req.body.name || !req.body.price) {
+    message = "Bad request";
+  } else {
+    fruit.name = req.body.name;
+    fruit.price = req.body.price;
+  }
+
+  res.status(status).json(message);
 });
 
 app.use((req, res, next) => {
