@@ -11,7 +11,11 @@ if (NODE_ENV === 'development') app.use(require('morgan')('dev'))
 app.use(require('body-parser').json())
  
 const data = {
-  fruits: [],
+  fruits: [
+    { "id": "p7pzzZxCX", "name": "banana", "price": "0.79" },
+    { "id": "H14ykcZcT", "name": "blueberries", "price": "2.99" },
+    { "id": "faf84ZZNF", "name": "strawberries", "price": "3.99" }
+  ],
   vegetables: [
     { "id": "AEdvQm9t_", "name": "green pepper", "price": "0.99" },
     { "id": "JA_dIbXLW", "name": "red pepper", "price": "0.99" },
@@ -64,7 +68,21 @@ app.delete('/vegetables/:id', (req, res, next) => {
   res.json({ status: 200, response })
 })
 
-app.put('/vegetables/[id]', (req, res, next) => {
+app.put('/vegetables/:id', (req, res, next) => {
+  const { vegetables } = data
+  const { id } = req.params
+  const vegetable = vegetables.find(veggie => veggie.id === id)
+  const vegetableIndex = vegetables.indexOf(vegetable)
+  const updateItems = req.body
+
+  if (!vegetable) {
+    const message = `Vegetable could not be found.`
+    next({ status: 404, message })
+  }
+
+  const response = vegetables.splice(vegetableIndex, 1, updateItems) 
+
+  res.json({ status: 200, response })
   
 })
 
@@ -79,14 +97,46 @@ app.post('/vegetables', helpers.validate, (req, res, next) => {
 
 app.get('/fruits', (req, res, next) => {
   const { fruits } = data
-  res.json(fruits)
+  // console.log(req.query.name)
+  if(typeof req.query.name != 'undefined'){
+    response = fruits.filter( fruit => {
+      // console.log(veggie.name)
+      if (fruit.name.includes(req.query.name)){
+        // console.log("Is this working")
+        return fruit;
+      }
+    });
+  } else {
+    response = fruits
+  }
+  // console.log(`${response} Be something` )
+  res.json(response)
 })
 
+app.get('/fruits/:id', (req, res, next) => {
+  const { fruits } = data
+  const { id } = req.params
+  const fruitable = fruits.find(fruit => fruit.id === id)
+  console.log(id)
+  if (!fruitable) {
+    const message = `Fruit could not be found.`
+    next({ status: 404, message })
+  }
 
+  res.json(fruitable)
+})
 
-app.delete('/fruits/[id]', (req, res, next) => {
-  const { fruit } = data.id
-  fruit.split(fruits)
+app.delete('/fruits/:id', (req, res, next) => {
+  const { fruits } = data
+  const { id } = req.params
+  const fruitable = fruits.find(fruit => fruit.id === id)
+  const deleteIndex = fruits.indexOf(fruitable)
+  if (!fruitable) {
+    const message = `Fruit could not be found.`
+    next({ status: 404, message })
+  }
+  const response = fruits.splice(deleteIndex, 1)
+  res.json({ status: 200, response })
 })
 
 app.post('/fruits', helpers.validate, (req, res, next) => {
@@ -98,6 +148,26 @@ app.post('/fruits', helpers.validate, (req, res, next) => {
   fruits.push(fruit)
   res.status(201).json(fruits)
 })
+
+app.put('/fruits/:id', (req, res, next) => {
+  const { fruits } = data
+  const { id } = req.params
+  const fruitable = fruits.find(fruit => fruit.id === id)
+  const fruitableIndex = fruits.indexOf(fruitable)
+  const updateItems = req.body
+
+  if (!fruitable) {
+    const message = `Vegetable could not be found.`
+    next({ status: 404, message })
+  }
+
+  const response = fruits.splice(fruitableIndex, 1, updateItems) 
+
+  res.json({ status: 200, response })
+  
+})
+
+
 
 app.use((req, res, next) => {
   next({
