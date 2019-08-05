@@ -8,63 +8,60 @@ if (NODE_ENV === 'development') app.use(require('morgan')('dev'))
 app.use(require('body-parser').json())
 
 const data = {
-  // fruits: [],
-  // vegetables: []
-  fruits: [{ "id": "14r5y6", "name": "apple", "price": "0.49" }],
-  vegetables: [{ "id": "y7474u", "name": "cilantro", "price": "1.00" },
-  { "id": "8ue38u", "name": "onion", "price": "2.00" }]
+  fruits: [],
+  vegetables: []
+  //fruits: [{ "id": "14r5y6", "name": "apple", "price": "0.49" }],
+  //vegetables: [{ "id": "y7474u", "name": "cilantro", "price": "1.00" },
+  //{ "id": "8ue38u", "name": "onion", "price": "2.00" }]
 }
-  //{ "id": "i86y3r", "name": "berries      ", "price": 0.79 }]
 
-
-  // IE compatibility polyfill for string.prototype.includes()
-  // Sunho Hong https://stackoverflow.com/a/39744409
-  if (!Array.prototype.includes) {
-    Object.defineProperty(Array.prototype, "includes", {
-      enumerable: false,
-      value: function(obj) {
-          var newArr = this.filter(function(el) {
-            return el == obj;
-          });
-          return newArr.length > 0;
+// IE compatibility polyfill for string.prototype.includes()
+// Sunho Hong https://stackoverflow.com/a/39744409
+if (!Array.prototype.includes) {
+  Object.defineProperty(Array.prototype, "includes", {
+    enumerable: false,
+    value: function(obj) {
+        var newArr = this.filter(function(el) {
+          return el == obj;
+        });
+        return newArr.length > 0;
+      }
+  });
+}
+// IE compatibility pollyfill for string.prototype.filter
+//http://independent-software.com/extending-the-javascript-array-prototype-with-polyfills.html
+if (!Array.prototype.filter) {
+  Array.prototype.filter = function (callbackfn, /*optional*/ thisArg) {
+    var k, len, result = [];
+    
+    // Method cannot be run on an array that does not exist.
+    if (this == null) {
+      throw new TypeError('this is null or not defined');
+    }
+    
+    // The callback must be a function.
+    if (typeof callbackfn !== 'function') {
+      throw new TypeError();
+    }
+    
+    // Loop through array.
+    len = this.length;
+    k = 0;
+    while (k < len) {
+      if (k in this) {
+        // For each element, if callback returns truthy, add it to
+        // result array.
+        if (callbackfn.call(thisArg, this[k], k, this)) {
+          result.push(this[k]);
         }
-    });
-  }
-  // IE compatibility pollyfill for string.prototype.filter
-  // http://independent-software.com/extending-the-javascript-array-prototype-with-polyfills.html
-  if (!Array.prototype.filter) {
-    Array.prototype.filter = function (callbackfn, /*optional*/ thisArg) {
-      var k, len, result = [];
-      
-      // Method cannot be run on an array that does not exist.
-      if (this == null) {
-        throw new TypeError('this is null or not defined');
       }
-      
-      // The callback must be a function.
-      if (typeof callbackfn !== 'function') {
-        throw new TypeError();
-      }
-      
-      // Loop through array.
-      len = this.length;
-      k = 0;
-      while (k < len) {
-        if (k in this) {
-          // For each element, if callback returns truthy, add it to
-          // result array.
-          if (callbackfn.call(thisArg, this[k], k, this)) {
-            result.push(this[k]);
-          }
-        }
-        k = k + 1;
-      }
-      return result;
-    };
-  }
+      k = k + 1;
+    }
+    return result;
+  };
+}
 
 /* Vegetables */
-// [GET /vegetables?name=[partial-query]](#get-vegetablesnamepartial-query)
 app.get('/vegetables', (req, res, next) => {
   const { vegetables } = data
   const { name } = req.query
@@ -135,11 +132,6 @@ app.put('/vegetables/:id', helpers.validate, (req, res, next) => {
 }) 
 
 
-
-
-  // //Make vegetable name lowercase
-  // const veg = id.toLowerCase()
-
 /* Fruits */
 app.get('/fruits', (req, res, next) => {
   const { fruits } = data
@@ -168,7 +160,6 @@ app.get('/fruits/:id', (req, res, next) => {
 
   res.status(200).json(fruit)
 })
-
 
 app.post('/fruits', helpers.validate, (req, res, next) => {
   const { fruits } = data
