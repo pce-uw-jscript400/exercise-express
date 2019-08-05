@@ -138,11 +138,11 @@ app.get('/fruits', (req, res, next) => {
   const { name } = req.query
   res.status(200)
 
-  // if no query, return vegetables' data
+  // if no query, return fruits' data
   if (!name) {
     res.json(fruits)
   } else {  // query exists
-    // Filter data for vegetable name
+    // Filter data for fruit name
     const fruit = fruits.filter( el => el.name.includes(name))
     res.json(fruit)
   }  
@@ -154,7 +154,7 @@ app.get('/fruits/:id', (req, res, next) => {
   const fruit = fruits.find(el => el.id === id)
 
   if (!fruit) {
-    const message = `Could not find vegetable with ID of ${id}`
+    const message = `Could not find fruit with ID of ${id}`
     next({ status: 404, message })
   }
 
